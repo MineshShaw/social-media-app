@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
 
-const signup = async (req, res) => {
+export const signup = async (req, res) => {
     try {
         const { name, userName, email, password } = req.body;
 
@@ -26,19 +27,19 @@ const signup = async (req, res) => {
             return res.status(400).json({ error: "Weak password. It must be at least 6 characters long." });
         }
 
+        // Password hashing
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         // Create user
         const newUser = await User.create({
             name,
             userName,
             email,
-            password,
+            password: hashedPassword,
         });
         return res.status(201).send(newUser);
     } catch (error) {
         return res.status(500).json({ error: "Error creating user" });
     }
 }
-
-module.exports = {
-    signup,
-};
