@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import generateToken from "../config/jwt.js"
 
 export const signup = async (req, res) => {
     try {
@@ -38,8 +39,51 @@ export const signup = async (req, res) => {
             email,
             password: hashedPassword,
         });
-        return res.status(201).send(newUser);
+
+        const token = await generateToken(newUser._id);
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: true,
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+        return res.status(201).json({ user: newUser, token });
     } catch (error) {
         return res.status(500).json({ error: "Error creating user" });
+    }
+}
+
+export const signin = async (req, res) => {
+    try {
+        const { userName, password } = req.body;
+
+        // Validate request body
+        if (!userName || !password) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        // Check if user exists
+        const user = await User.findOne({ userName });
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+        // Successful login
+        const token = await generateToken(user._id);
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: true,
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+        return res.status(200).json({ message: "Login successful", user });
+    } catch (error) {
+        return res.status(500).json({ error: "Error signing in" });
     }
 }
