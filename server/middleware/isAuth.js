@@ -1,17 +1,18 @@
 import jwt from "jsonwebtoken";
 
 const isAuth = (req, res, next) => {
-  const token = req.cookie.token;
+  const token = req.cookies.token; 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+    req.userId = decoded.id;
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 };
 
 export default isAuth;
