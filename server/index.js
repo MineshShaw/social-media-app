@@ -4,6 +4,7 @@ import connectDB from "./config/dbconnection.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config({quiet: true, path: ".env"});
 
@@ -14,6 +15,10 @@ connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}))
 
 app.get("/", (req, res) => {
     res.send("Hello World!");

@@ -3,11 +3,22 @@
 import { useState } from "react";
 import { FiUser, FiLock } from "react-icons/fi";
 import Link from "next/link";
+import { login } from "@/lib/auth";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      const response = await login(userName, password);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex flex-col bg-gradient-to-r from-blue-200 to-white items-center justify-center min-h-screen py-6 px-4">
@@ -77,6 +88,8 @@ export default function LoginPage() {
         <button
           type="submit"
           className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-md transition duration-200"
+          disabled={!userName || !password}
+          onClick={handleLogin}
         >
           Sign in
         </button>
