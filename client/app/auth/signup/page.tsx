@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import Link from "next/link";
 import { signup } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { setUserData } from "@/redux/userSlice";
+import { useDispatch } from "react-redux";
+
 
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
@@ -12,6 +16,9 @@ export default function SignupPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -26,6 +33,18 @@ export default function SignupPage() {
     try {
         const response = await signup(fullName, userName, email, password);
         console.log(response);
+
+        // Handle successful signup (e.g., redirect to login or dashboard)
+        setFullName("");
+        setUserName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setError(null);
+
+        dispatch(setUserData(response));
+
+        router.push('/dashboard')
     } catch (error) {
         console.error(error);
     }

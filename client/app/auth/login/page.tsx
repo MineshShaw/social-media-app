@@ -4,17 +4,31 @@ import { useState } from "react";
 import { FiUser, FiLock } from "react-icons/fi";
 import Link from "next/link";
 import { login } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { setUserData } from "@/redux/userSlice";
+import { useDispatch } from "react-redux";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       const response = await login(userName, password);
       console.log(response);
+
+      if (response.error) {
+        setError(response.error);
+      } else {
+        setError(null);
+        dispatch(setUserData(response));
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error(error);
     }

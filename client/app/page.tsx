@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default function LandingPage() {
+  useCurrentUser();
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-200 to-white">
       {/* Navbar */}
