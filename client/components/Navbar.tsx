@@ -9,8 +9,7 @@ const links = [
 
 export default function Navbar() {
   return (
-    <nav className="flex justify-between items-center p-6 bg-white shadow-md">
-      <h1 className="text-2xl font-bold text-indigo-600">ScalerGram</h1>
+    <nav className="flex justify-center rounded-4xl max-w-[50%] items-center p-4 bg-white shadow-md">
       <div className="space-x-4 flex items-center">
         {links.map((link) => (
           <Link

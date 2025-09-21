@@ -18,11 +18,10 @@ export default function DashboardLayout({
   useCurrentUser();
 
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
+    <div className="flex flex-col w-full h-screen bg-gradient-to-r from-blue-300 to-purple-300 ">
       <main
         style={{ padding: 24 }}
-        className="bg-gradient-to-r from-blue-300 to-purple-300 flex-1 flex flex-col"
+        className="flex-1 flex flex-col"
       >
         {children}
 
@@ -43,6 +42,9 @@ export default function DashboardLayout({
           </div>
         </div>
       </main>
+      <div className="p-4 flex justify-center items-center w-full">
+      <Navbar />
+      </div>
     </div>
   );
 }
