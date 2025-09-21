@@ -20,13 +20,12 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const response = await login(userName, password);
-      console.log(response);
 
       if (response.error) {
         setError(response.error);
       } else {
         setError(null);
-        dispatch(setUserData(response));
+        dispatch(setUserData(response.user));
         router.push("/dashboard");
       }
     } catch (error) {

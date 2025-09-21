@@ -42,7 +42,7 @@ export default function SignupPage() {
         setConfirmPassword("");
         setError(null);
 
-        dispatch(setUserData(response));
+        dispatch(setUserData(response.user));
 
         router.push('/dashboard')
     } catch (error) {
