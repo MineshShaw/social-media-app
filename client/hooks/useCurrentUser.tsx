@@ -2,7 +2,7 @@
 
 import { setUserData } from '@/redux/userSlice';
 import { getCurrentUser } from '@/lib/auth';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 

@@ -7,8 +7,9 @@ import { useSelector } from "react-redux";
 
 export default function UserProfile() {
   interface UserData {
+    profilePic: string;
     name: string;
-    email: string;
+    userName: string;
   }
 
   const user = useSelector((state: RootState) => state.user.userData) as UserData | null;
@@ -21,14 +22,14 @@ export default function UserProfile() {
     <Card>
       <div className="flex flex-col items-center p-4">
         <Image
-          src="/images/profile-pic.png"
+          src={user.profilePic || "/images/profile-pic.png"}
           alt="Profile"
           className="rounded-full mb-4"
           width={100}
           height={100}
         />
         <h1 className="text-2xl font-bold text-black">{user.name}</h1>
-        <p className="text-gray-600">{user.email}</p>
+        <p className="text-gray-600">{user.userName}</p>
         <h2 className="text-xl font-semibold mt-4 text-black">Suggested Users</h2>
         <ul className="flex flex-col text-black">
           <li className="flex justify-between items-center py-2 gap-2">

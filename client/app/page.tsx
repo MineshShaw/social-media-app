@@ -6,7 +6,7 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 export default function LandingPage() {
   useCurrentUser();
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-200 to-white">
+    <div className="flex flex-col min-h-screen">
       {/* Navbar */}
       <nav className="flex justify-between items-center p-6 bg-white shadow-md">
         <h1 className="text-2xl font-bold text-indigo-600">ScalerGram</h1>

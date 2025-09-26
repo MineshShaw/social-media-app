@@ -24,13 +24,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <div className="bg-gradient-to-r from-blue-300 to-purple-300">
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );

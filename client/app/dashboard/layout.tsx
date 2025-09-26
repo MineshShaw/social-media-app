@@ -18,7 +18,7 @@ export default function DashboardLayout({
   useCurrentUser();
 
   return (
-    <div className="flex flex-col w-full h-screen bg-gradient-to-r from-blue-300 to-purple-300 ">
+    <div className="flex flex-col w-full h-screen">
       <main
         style={{ padding: 24 }}
         className="flex-1 flex flex-col"

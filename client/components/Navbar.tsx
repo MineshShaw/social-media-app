@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const links = [
   { href: "/dashboard", label: "Home" },
@@ -7,7 +9,15 @@ const links = [
   { href: "messages", label: "Messages" },
 ];
 
+interface userData {
+  name: string;
+  email: string;
+  _id: string;
+  userName: string;
+}
+
 export default function Navbar() {
+  const user = useSelector((state: RootState) => state.user.userData as userData | null);
   return (
     <nav className="flex justify-center rounded-4xl max-w-[50%] items-center p-4 bg-white shadow-md">
       <div className="space-x-4 flex items-center">
@@ -20,7 +30,7 @@ export default function Navbar() {
             {link.label}
           </Link>
         ))}
-        <Link href="/profile">
+        <Link href={`/profile/${user?.userName}`} className="ml-4">
           <Image
             src="/images/profile-pic.png"
             alt="Profile"
