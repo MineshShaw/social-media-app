@@ -1,0 +1,230 @@
+"use client";
+
+import React, { useState, useRef, ChangeEvent } from "react";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { FiPlusSquare } from "react-icons/fi";
+import { ClipLoader } from "react-spinners";
+import axios from "axios";
+import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
+
+type UploadType = "post" | "story" | "reel";
+
+interface userData {
+  name: string;
+  email: string;
+  _id: string;
+  userName: string;
+  profilePic: string;
+}
+
+export default function Upload() {
+  const [uploadType, setUploadType] = useState<UploadType>("post");
+  const [frontendMedia, setFrontendMedia] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
+  const [caption, setCaption] = useState<string>("");
+  const [backendMedia, setBackendMedia] = useState<File | null>(null);
+  const [loading] = useState<boolean>(false);
+  const user = useSelector((state: RootState) => state.user.userData as userData);
+  const router = useRouter();
+
+  const api = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    withCredentials: true,
+  });
+
+  const mediaInput = useRef<HTMLInputElement | null>(null);
+
+  const handleMedia = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("Function started");
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type.includes("image")) {
+      setMediaType("image");
+    } else if (file.type.includes("video")) {
+      setMediaType("video");
+    } else {
+      setMediaType(null);
+    }
+
+    console.log(file);
+    const mediaUrl = URL.createObjectURL(file);
+    console.log(mediaUrl);
+    setFrontendMedia(mediaUrl);
+    setBackendMedia(file);
+  };
+
+  const uploadPost = async () => {
+    if (!backendMedia) return;
+
+    const formData = new FormData();
+    formData.append("userId", user._id);
+    formData.append("mediaUrl", backendMedia);
+    formData.append("caption", caption);
+    formData.append("mediaType", mediaType || "image");
+
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
+    try {
+        const response = await api.post(
+            `${process.env.NEXT_PUBLIC_API_URL}api/post/upload`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            },
+        );
+        console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUpload = () => {
+    if (uploadType === "post") {
+      uploadPost();
+    }
+    router.push("/dashboard");
+  };
+
+  return (
+    <div
+      className="
+        w-full min-h-screen flex items-center justify-center
+      "
+    >
+      <div className="w-[95%] lg:max-w-[60%] h-[600px] rounded-2xl flex justify-center items-center overflow-hidden">
+        {/* LEFT (form area) */}
+        <div
+          className="
+            w-full lg:w-1/2 h-full 
+            bg-white 
+            flex flex-col items-center justify-start
+            px-6 sm:px-10 
+            pt-8
+            gap-5
+            shadow-[0_10px_40px_rgba(0,0,0,0.2)]
+          "
+        >
+          {/* Header */}
+          <div className="flex items-center gap-3 w-full">
+            <MdOutlineKeyboardBackspace className="w-6 h-6 text-neutral-600 cursor-pointer" />
+            <h2 className="text-lg font-semibold text-neutral-700">
+              Upload Media
+            </h2>
+          </div>
+
+          {/* Upload type switch */}
+          <div className="w-[95%] h-[50px] bg-neutral-100 rounded-full flex justify-around items-center mt-2">
+            {(["post", "story", "reel"] as UploadType[]).map((type) => (
+              <div
+                key={type}
+                onClick={() => setUploadType(type)}
+                className={`
+                  w-[28%] h-[80%] flex justify-center items-center text-sm font-medium rounded-full cursor-pointer 
+                  transition-all duration-200
+                  ${
+                    uploadType === type
+                      ? "bg-[#0095F6] text-white shadow-md"
+                      : "text-neutral-600 hover:bg-neutral-200"
+                  }
+                `}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </div>
+            ))}
+          </div>
+
+          {/* Upload box */}
+          {uploadType !== "post" ? (
+            <div
+              className="
+                w-[95%] h-[220px] bg-neutral-50 border border-dashed border-neutral-300 
+                flex flex-col items-center justify-center gap-3 
+                mt-6 rounded-xl
+              "
+            >
+              <FiPlusSquare className="text-neutral-400 w-8 h-8" />
+              <p className="text-neutral-400 font-medium">
+                {uploadType.charAt(0).toUpperCase() + uploadType.slice(1)} upload
+                coming soon
+              </p>
+            </div>
+          ) : !frontendMedia ? (
+            <div
+              className="
+                w-[95%] h-[220px] bg-neutral-50 border border-dashed border-neutral-300 
+                flex flex-col items-center justify-center gap-3 
+                mt-6 rounded-xl cursor-pointer 
+                hover:bg-neutral-100 transition
+              "
+              onClick={() => mediaInput.current?.click()}
+            >
+              <input
+                type="file"
+                accept="image/*,video/*"
+                hidden
+                ref={mediaInput}
+                onChange={handleMedia}
+              />
+              <FiPlusSquare className="text-neutral-500 w-8 h-8" />
+              <p className="text-neutral-600 font-medium">Upload Post</p>
+            </div>
+          ) : (
+            <div className="w-[95%] mt-6 flex flex-col items-center">
+              {mediaType === "image" && (
+                <Image
+                  src={frontendMedia}
+                  alt="Uploaded preview"
+                  className="w-full max-h-[220px] object-cover rounded-xl"
+                    width={500}
+                    height={500}
+                />
+              )}
+              {mediaType === "video" && (
+                <video
+                  src={frontendMedia}
+                  controls
+                  className="w-full max-h-[220px] rounded-xl"
+                />
+              )}
+
+              <input
+                type="text"
+                placeholder="Write a caption..."
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                className="
+                  w-full mt-4 px-3 py-2 rounded-md border border-neutral-300 
+                  bg-neutral-50 text-neutral-800 text-sm 
+                  focus:outline-none focus:border-neutral-400
+                "
+              />
+            </div>
+          )}
+
+          {/* Button */}
+          {uploadType === "post" && frontendMedia && (
+            <button
+              onClick={handleUpload}
+              className="
+                w-[95%] h-[44px] mt-6 rounded-lg font-semibold 
+                bg-[#0095F6] text-white 
+                hover:bg-[#0086dd] active:scale-[0.99] transition
+                shadow-[0_6px_16px_rgba(0,149,246,0.35)]
+              "
+            >
+              {loading ? <ClipLoader size={24} color="white" /> : "Upload Post"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

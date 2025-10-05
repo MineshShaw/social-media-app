@@ -1,19 +1,18 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
 import React from "react";
 import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default function DashboardLayout({
   feed,
-  messages,
-  profile,
-  children,
-}: {
-  feed: React.ReactNode;
-  messages: React.ReactNode;
-  profile: React.ReactNode;
-  children: React.ReactNode;
+    messages,
+    profile,
+    children,
+  }: {
+    feed: React.ReactNode;
+    messages: React.ReactNode;
+    profile: React.ReactNode;
+    children: React.ReactNode;
 }) {
   useCurrentUser();
 
@@ -42,9 +41,6 @@ export default function DashboardLayout({
           </div>
         </div>
       </main>
-      <div className="p-4 flex justify-center items-center w-full">
-      <Navbar />
-      </div>
     </div>
   );
 }

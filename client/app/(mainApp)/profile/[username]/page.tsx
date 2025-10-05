@@ -6,6 +6,7 @@ import { getUserByUsername, updateUserProfile } from "@/lib/user";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { followUser, unfollowUser } from "@/lib/follow";
 
 export interface User {
   _id: string;
@@ -29,24 +30,29 @@ export default function Profile() {
 
   const [user, setUser] = useState<User | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); 
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
   const [profileFile, setProfileFile] = useState<File | null>(null); 
 
   useEffect(() => {
     const fetchUser = async (username: string) => {
-      console.log("Fetching User...");
       const fetchedUser = await getUserByUsername(username);
-      console.log("Fetched User:", fetchedUser);
       setUser(fetchedUser);
     };
 
     if (username) fetchUser(username);
-  }, [username]);
+    setIsFollowing(
+      currentUser ? currentUser.following.includes(user?._id || "") : false
+    );
+  }, [username, currentUser, user?._id]);
 
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
-    console.log("User Followed");
+    if (isFollowing) {
+      unfollowUser(user!._id).catch((err) => console.error(err));
+    } else {
+      followUser(user!._id).catch((err) => console.error(err));
+    }
   };
 
   const handleEditClick = () => {

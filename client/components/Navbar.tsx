@@ -2,18 +2,25 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { AiFillHome } from "react-icons/ai";
+import { FaCompass } from "react-icons/fa";
+import { FaRegCommentDots } from "react-icons/fa";
+import { FiUpload } from "react-icons/fi";
 
 const links = [
-  { href: "/dashboard", label: "Home" },
-  { href: "/explore", label: "Explore" },
-  { href: "messages", label: "Messages" },
+  { href: "/dashboard", label: "Home", icon: <AiFillHome size={32} /> },
+  { href: "/explore", label: "Explore", icon: <FaCompass size={32} /> },
+  { href: "/messages", label: "Messages", icon: <FaRegCommentDots size={32} /> },
+  { href: "/upload", label: "Upload", icon: <FiUpload size={32} /> },
 ];
+
 
 interface userData {
   name: string;
   email: string;
   _id: string;
   userName: string;
+  profilePic: string;
 }
 
 export default function Navbar() {
@@ -23,16 +30,16 @@ export default function Navbar() {
       <div className="space-x-4 flex items-center">
         {links.map((link) => (
           <Link
-            key={link.href}
+            key={link.label}
             href={link.href}
-            className="text-gray-700 hover:text-indigo-600"
+            className="text-gray-700 font-bold hover:text-indigo-600 text-2xl"
           >
-            {link.label}
+            {link.icon}
           </Link>
         ))}
         <Link href={`/profile/${user?.userName}`} className="ml-4">
           <Image
-            src="/images/profile-pic.png"
+            src={user?.profilePic || "/images/profile-pic.png"}
             alt="Profile"
             width={40}
             height={40}

@@ -5,6 +5,8 @@ import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import postRouter from "./routes/post.routes.js";
+import followRouter from "./routes/follow.routes.js";
 
 dotenv.config({quiet: true, path: ".env"});
 
@@ -27,6 +29,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
+app.use("/api/follow", followRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
